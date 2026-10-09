@@ -63,7 +63,10 @@ export default function Home() {
     <section className="contact" id="contact" aria-labelledby="contact-title">
       <div className="contact-inner"><div className="contact-meta"><Eyebrow>03 <span>/</span> Contact</Eyebrow><span>EDINBURGH, SCOTLAND</span></div>
         <h2 id="contact-title">For professional<br /><em>enquiries.</em></h2>
-        <div className="contact-bottom"><p>Connect with Rajiv on LinkedIn.</p><a className="contact-button" href={chef.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a></div>
+        <div className="contact-bottom"><p>Email or connect with Rajiv on LinkedIn.</p><div className="contact-links">
+          {chef.emails.map((email) => <a className="contact-button contact-email" href={`mailto:${email}`} key={email}>{email} <span aria-hidden="true">↗</span></a>)}
+          <a className="contact-button" href={chef.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span></a>
+        </div></div>
       </div>
     </section>
 

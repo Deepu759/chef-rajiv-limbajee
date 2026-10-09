@@ -7,6 +7,7 @@ export const chef = {
   location: 'Edinburgh, Scotland, UK',
   origin: 'Mauritius',
   linkedin: 'https://www.linkedin.com/in/rajiv-limbajee-7b303b182',
+  emails: ['rajivlim29@gmail.com', 'Rajiv.Limbajee@ihg.com'],
   portrait: '/images/profile/rajiv-limbajee-precision-plating.webp' as string | null,
   // Set NEXT_PUBLIC_SITE_URL to the verified production origin before deployment.
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '') || null,

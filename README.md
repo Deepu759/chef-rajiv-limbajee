@@ -43,15 +43,22 @@ After deployment:
 
 ## Deploy to Vercel
 
-This folder has been initialized as a Git repository on `main`; it has no commit or remote yet. After creating an empty GitHub repository, add and push it from this folder:
+Use the existing GitHub repository [`Deepu759/chef-rajiv-limbajee`](https://github.com/Deepu759/chef-rajiv-limbajee) and its existing Vercel project. Do not create a second repository or Vercel project.
 
 ```bash
+pnpm lint
+pnpm build
+
+git status
 git add -A
-git commit -m "Prepare Chef Rajiv Limbajee portfolio"
-git remote add origin <GitHub repository URL>
-git push -u origin main
+git commit -m "Describe the change"
+git push origin main
 ```
 
-Then import that repository in Vercel. Use the free `vercel.app` project URL for an initial launch if there is no custom domain, and set `NEXT_PUBLIC_SITE_URL` to that exact HTTPS origin in Vercel's Production environment variables. Deploy and verify the canonical tag, social preview image, Person structured data, sitemap, robots file and LinkedIn link on the production site.
+The existing Vercel project's Git settings must connect to this repository, use `main` as its Production Branch, and create a Production deployment for pushes to `main`. Confirm those settings before relying on automatic production deployments. Preserve the existing production domain and ensure the Production deployment is publicly accessible; keep Preview deployment protection as configured for the team.
+
+After each push, check the existing Vercel project's deployment list. Confirm the new commit has a **Ready** Production deployment, then visit the assigned production domain and verify the changed page and assets. Do not treat a Preview deployment or an unverified generated URL as the production site.
+
+Set `NEXT_PUBLIC_SITE_URL` in Vercel's Production environment variables to the exact HTTPS production origin, with no trailing slash. Redeploy after changing it, then verify the canonical URL, Person structured data, `/robots.txt` and `/sitemap.xml` on the production domain. The current production domain and GitHub-to-Vercel settings still need to be confirmed in the existing Vercel account before automatic deployment can be considered verified.
 
 There are no additional application routes beyond the homepage; Next.js supplies the not-found route. The sitemap and robots files are generated from `src/app/sitemap.ts` and `src/app/robots.ts`.
