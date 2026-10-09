@@ -1,0 +1,30 @@
+export const chef = {
+  name: 'Rajiv Limbajee',
+  profession: 'Professional Chef',
+  role: 'Head Chef',
+  venue: 'Le Petit Beefbar Edinburgh',
+  hotel: 'InterContinental Edinburgh The George',
+  location: 'Edinburgh, Scotland, UK',
+  origin: 'Mauritius',
+  linkedin: 'https://www.linkedin.com/in/rajiv-limbajee-7b303b182',
+  portrait: '/images/profile/rajiv-limbajee-precision-plating.webp' as string | null,
+  // Set NEXT_PUBLIC_SITE_URL to the verified production origin before deployment.
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '') || null,
+  career: [
+    { title: 'Head Chef', employer: 'Le Petit Beefbar Edinburgh', dates: '2026 – present' },
+    { title: 'Sous Chef', employer: 'Le Petit Beefbar Edinburgh', dates: '2025 – 2026' },
+    { title: 'Junior Sous Chef', employer: 'Le Petit Beefbar Edinburgh', dates: 'January 2023 – 2025' },
+    { title: 'Senior Chef de Partie', employer: 'The Royal Terrace Hotel', dates: 'September 2022 – January 2023' },
+    { title: 'Chef de Partie / Junior Sous Chef', employer: 'Jumeirah, Dubai', dates: 'September 2019 – January 2022' },
+    { title: 'Demi Chef de Partie', employer: 'Jumeirah Vittaveli', dates: 'From February 2017' },
+  ],
+  philosophy: '',
+  skills: [] as string[],
+  awards: [] as string[],
+  reference: {
+    name: 'William Talbot',
+    role: 'Chef de Cuisine',
+    workplace: 'Jumeirah Vittaveli',
+    quotation: '',
+  },
+};

@@ -1,0 +1,14 @@
+.next
+node_modules
+.env*
+!.env.example
+.DS_Store
+
+# Local deployment settings and credentials
+.vercel
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
