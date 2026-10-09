@@ -61,7 +61,7 @@ export default function Home() {
     {chef.reference.quotation && <section className="reference section-wrap"><div className="section-meta"><Eyebrow>Professional reference</Eyebrow></div><blockquote>{chef.reference.quotation}</blockquote><p>{chef.reference.name} <span>·</span> {chef.reference.role}, {chef.reference.workplace}</p></section>}
 
     <section className="contact" id="contact" aria-labelledby="contact-title">
-      <div className="contact-inner"><div className="contact-meta"><Eyebrow>03 <span>/</span> Contact</Eyebrow><span>EDINBURGH, SCOTLAND</span></div>
+      <div className="contact-inner"><div className="contact-meta"><Eyebrow>04 <span>/</span> Contact</Eyebrow><span>EDINBURGH, SCOTLAND</span></div>
         <h2 id="contact-title">For professional<br /><em>enquiries.</em></h2>
         <div className="contact-bottom"><p>Email or connect with Rajiv on LinkedIn.</p><div className="contact-links">
           {chef.emails.map((email) => <a className="contact-button contact-email" href={`mailto:${email}`} key={email}>{email} <span aria-hidden="true">↗</span></a>)}
