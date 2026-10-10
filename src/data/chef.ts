@@ -1,3 +1,6 @@
+export const productionSiteUrl = 'https://chef-rajiv-limbajee001.vercel.app';
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '');
+
 export const chef = {
   name: 'Rajiv Limbajee',
   profession: 'Professional Chef',
@@ -10,8 +13,8 @@ export const chef = {
   linkedin: 'https://www.linkedin.com/in/rajiv-limbajee-7b303b182',
   emails: ['rajivlim29@gmail.com', 'Rajiv.Limbajee@ihg.com'],
   portrait: '/images/profile/rajiv-limbajee-precision-plating.webp' as string | null,
-  // Set NEXT_PUBLIC_SITE_URL to the verified production origin before deployment.
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '') || null,
+  // Keep canonical metadata on the known production origin, even when the env var is empty or a preview URL.
+  siteUrl: configuredSiteUrl === productionSiteUrl ? configuredSiteUrl : productionSiteUrl,
   career: [
     { title: 'Commis Chef', employer: 'Constance Prince Maurice', dates: 'September 2013 – September 2015', location: 'Mauritius', focus: 'French cuisine · fine dining' },
     { title: 'Demi Chef de Partie', employer: 'InterContinental Mauritius Resort', dates: 'August 2015 – January 2017', location: 'Mauritius', focus: 'Asian cuisine' },

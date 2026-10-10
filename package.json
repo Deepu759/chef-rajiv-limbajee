@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "verify:sitemap": "node scripts/verify-sitemap.mjs",
     "start": "next start",
     "lint": "eslint ."
   },
