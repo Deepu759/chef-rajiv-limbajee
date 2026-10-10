@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "verify:sitemap": "node scripts/verify-sitemap.mjs",
+    "verify:seo": "node scripts/verify-seo.mjs",
     "start": "next start",
     "lint": "eslint ."
   },
