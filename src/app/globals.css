@@ -36,7 +36,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 .navigation a { transition: color .2s ease; }
 .navigation a:hover { color: #766747; }
 .nav-linkedin { padding-left: 28px; border-left: 1px solid rgba(41, 42, 40, .22); }
-.nav-linkedin span, .footer-link span { color: var(--gold); margin-left: 5px; }
+.nav-linkedin span { color: var(--gold); margin-left: 5px; }
 .menu-toggle { display: none; }
 
 .hero { min-height: 680px; height: min(850px, 94svh); position: relative; display: flex; align-items: center; overflow: hidden; padding: 110px var(--page-gutter) 74px; background: var(--ivory); color: var(--charcoal); }
@@ -122,7 +122,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 .contact-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
 .contact-button { display: inline-flex; align-items: center; gap: 40px; padding: 12px 16px; border: 1px solid rgba(246, 244, 238, .55); font-size: 9px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; transition: background .2s ease, color .2s ease; }
 .contact-email { text-transform: none; letter-spacing: .02em; }
-.contact-button span { color: var(--gold-soft); font-size: 14px; }
+.contact-button .contact-icon { display: block; width: 14px; height: 14px; flex: 0 0 auto; color: var(--gold-soft); }
+.contact-button .linkedin-icon { display: block; width: 12px; height: 12px; flex: 0 0 auto; color: var(--gold-soft); }
+.footer-link .linkedin-icon { display: inline-block; width: 12px; height: 12px; margin-left: 5px; color: var(--gold); vertical-align: -2px; }
 .contact-button:hover { background: var(--ivory); color: var(--charcoal); }
 .site-footer { display: grid; grid-template-columns: 55px 1fr 1fr auto; align-items: center; gap: 22px; min-height: 104px; padding: 20px var(--page-gutter); background: var(--near-black); color: var(--ivory); }
 .footer-mark { font-size: 24px; }
