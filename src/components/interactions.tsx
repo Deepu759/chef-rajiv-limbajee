@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { chef } from '@/data/chef';
 import { gallery } from '@/data/gallery';
 
@@ -37,10 +37,12 @@ export function SiteHeader({ showGallery }: { showGallery: boolean }) {
 export function Gallery() {
   const photos = gallery;
   const [activeIndex, setActiveIndex] = useState(0);
-  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [interactionPause, setInteractionPause] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
+  const [dragging, setDragging] = useState(false);
+  const inactivityTimer = useRef<number | null>(null);
+  const pointerStart = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -58,33 +60,78 @@ export function Gallery() {
   }, []);
 
   useEffect(() => {
-    if (photos.length < 2 || paused || reducedMotion || !pageVisible) return;
+    if (photos.length < 2 || interactionPause || reducedMotion || !pageVisible) return;
     const timer = window.setTimeout(() => {
-      setPreviousIndex(activeIndex);
       setActiveIndex((activeIndex + 1) % photos.length);
     }, 2000);
     return () => window.clearTimeout(timer);
-  }, [activeIndex, pageVisible, paused, photos.length, reducedMotion]);
+  }, [activeIndex, interactionPause, pageVisible, photos.length, reducedMotion]);
 
   useEffect(() => {
-    if (previousIndex === null) return;
-    const timer = window.setTimeout(() => setPreviousIndex(null), 850);
-    return () => window.clearTimeout(timer);
-  }, [previousIndex]);
+    return () => {
+      if (inactivityTimer.current !== null) window.clearTimeout(inactivityTimer.current);
+    };
+  }, []);
 
   if (photos.length === 0) return null;
 
-  const nextIndex = (activeIndex + 1) % photos.length;
-  const imageSizes = '(max-width: 640px) calc(100vw - 44px), (max-width: 1440px) 86vw, 1200px';
+  function noteInteraction() {
+    setInteractionPause(true);
+    if (inactivityTimer.current !== null) window.clearTimeout(inactivityTimer.current);
+    inactivityTimer.current = window.setTimeout(() => {
+      inactivityTimer.current = null;
+      setInteractionPause(false);
+    }, 10000);
+  }
+
+  function move(direction: -1 | 1) {
+    noteInteraction();
+    setActiveIndex((current) => (current + direction + photos.length) % photos.length);
+  }
+
+  const imageSizes = '(max-width: 640px) calc(84vw - 37px), (max-width: 1440px) 72vw, 1024px';
 
   return <>
     <div className="gallery-slideshow" role="region" aria-roledescription="carousel" aria-label="Food photographs">
-      <div className="gallery-frame" role="group" aria-roledescription="slide" aria-label={`${activeIndex + 1} of ${photos.length}`} aria-live="off">
-        {previousIndex !== null && <Image key={photos[previousIndex].image} src={photos[previousIndex].image} alt="" fill sizes={imageSizes} className="gallery-slide gallery-slide-previous" aria-hidden="true" />}
-        <Image key={photos[activeIndex].image} src={photos[activeIndex].image} alt={photos[activeIndex].alt} fill sizes={imageSizes} className="gallery-slide gallery-slide-active" priority={activeIndex === 0} />
-        {photos.length > 1 && <Image key={photos[nextIndex].image} src={photos[nextIndex].image} alt="" fill sizes={imageSizes} className="gallery-slide gallery-slide-prefetch" aria-hidden="true" loading="eager" />}
+      <div className={dragging ? 'gallery-frame is-dragging' : 'gallery-frame'} role="group" aria-label="Use the left and right arrow keys to change photos" aria-live="off" tabIndex={0}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+          if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
+        }}
+        onPointerDown={(event) => {
+          if (event.button !== 0 || (event.target as HTMLElement).closest('button, a')) return;
+          pointerStart.current = { x: event.clientX, y: event.clientY };
+          event.currentTarget.setPointerCapture(event.pointerId);
+          setDragging(true);
+          noteInteraction();
+        }}
+        onPointerUp={(event) => {
+          const start = pointerStart.current;
+          pointerStart.current = null;
+          setDragging(false);
+          if (!start) return;
+          const deltaX = event.clientX - start.x;
+          const deltaY = event.clientY - start.y;
+          if (Math.abs(deltaX) > 36 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) move(deltaX < 0 ? 1 : -1);
+        }}
+        onPointerCancel={() => { pointerStart.current = null; setDragging(false); }}>
+        {Array.from({ length: 5 }, (_, slot) => {
+          const offset = slot - 2;
+          const index = (activeIndex + offset + photos.length) % photos.length;
+          const active = offset === 0;
+          const side = Math.abs(offset) === 1;
+          return <div key={photos[index].image} className={`gallery-slide${active ? ' gallery-slide-active' : side ? ' gallery-slide-side' : ' gallery-slide-away'}`}
+            role={active ? 'group' : undefined} aria-roledescription={active ? 'slide' : undefined}
+            aria-label={active ? `${activeIndex + 1} of ${photos.length}` : undefined} aria-hidden={!active}
+            style={{ transform: `translate3d(calc(-50% + ${offset * 99}%), -50%, 0) scale(${active ? 1 : 0.9})` }}>
+            <Image src={photos[index].image} alt={active ? photos[index].alt : ''} fill sizes={imageSizes} priority={active && activeIndex === 0} loading={Math.abs(offset) <= 1 ? 'eager' : 'lazy'} />
+          </div>;
+        })}
       </div>
-      {photos.length > 1 && !reducedMotion && <button className="gallery-toggle" type="button" onClick={() => setPaused(!paused)}>{paused ? 'Play slideshow' : 'Pause slideshow'}</button>}
+      <div className="gallery-controls">
+        <button type="button" aria-label="Previous food photograph" onClick={() => move(-1)}>←</button>
+        <button type="button" aria-label="Next food photograph" onClick={() => move(1)}>→</button>
+      </div>
     </div>
   </>;
 }
