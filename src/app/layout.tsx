@@ -7,6 +7,7 @@ const description = 'Rajiv Limbajee is Head Chef at Le Petit Beefbar Edinburgh, 
 
 export const metadata: Metadata = {
   ...(chef.siteUrl ? { metadataBase: new URL(chef.siteUrl), alternates: { canonical: '/' } } : {}),
+  verification: { google: 'F-8Zvp_qMRGy2mG34-3aS1hVkEAlPi6WLzD3-FoNfec' },
   title,
   description,
   openGraph: {
