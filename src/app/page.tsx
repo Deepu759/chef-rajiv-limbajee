@@ -30,19 +30,19 @@ export default function Home() {
       <div className="section-meta"><Eyebrow>01 <span>/</span> Profile</Eyebrow><span className="meta-rule" /></div>
       <div className="about-content">
         <div className="about-heading"><p className="section-overline">A professional profile</p><h2 id="about-title">From Mauritius.<br /><em>Based in Edinburgh.</em></h2></div>
-        <div className="about-copy"><p>Rajiv Limbajee is a professional chef from Mauritius and Head Chef at Le Petit Beefbar Edinburgh, within InterContinental Edinburgh The George.</p><p>His career includes kitchen roles in Edinburgh and Dubai, with an earlier position at Jumeirah Vittaveli.</p><a className="inline-link" href={chef.linkedin} target="_blank" rel="noreferrer">Professional profile on LinkedIn <span aria-hidden="true">↗</span></a></div>
+        <div className="about-copy"><p>{chef.biography}</p><a className="inline-link" href={chef.linkedin} target="_blank" rel="noreferrer">Professional profile on LinkedIn <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
 
     <section className="career section-wrap" id="career" aria-labelledby="career-title">
       <div className="section-head">
         <div className="section-meta"><Eyebrow>02 <span>/</span> Experience</Eyebrow><span className="meta-rule" /></div>
-        <div className="section-title-group"><p className="section-overline">A career in the kitchen</p><h2 id="career-title">The professional<br /><em>journey.</em></h2></div>
-        <p className="section-summary">From early kitchen roles to Head Chef in Edinburgh.</p>
+        <div className="section-title-group"><p className="section-overline">International experience</p><h2 id="career-title">Career <em>Journey</em></h2></div>
+        <p className="section-summary">Roles across Mauritius, the Maldives, the UAE and Scotland.</p>
       </div>
       <ol className="timeline">{chef.career.map((job, index) => <li className="timeline-item" key={`${job.employer}-${job.title}`}>
         <span className="timeline-index">{String(index + 1).padStart(2, '0')}</span>
-        <div className="timeline-main"><h3>{job.title}</h3><p>{job.employer}</p></div>
+        <div className="timeline-main"><h3>{job.title}</h3><p className="timeline-employer">{job.employer}</p>{job.location && <p className="timeline-detail">{job.location}{job.focus && <> <span aria-hidden="true">·</span> {job.focus}</>}</p>}</div>
         <time>{job.dates}</time>
       </li>)}</ol>
     </section>
