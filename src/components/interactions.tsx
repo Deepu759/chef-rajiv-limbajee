@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { chef } from '@/data/chef';
 import { gallery } from '@/data/gallery';
 
@@ -35,32 +35,57 @@ export function SiteHeader({ showGallery }: { showGallery: boolean }) {
 }
 
 export function Gallery() {
-  const photos = gallery.filter((photo) => photo.image);
-  const [active, setActive] = useState<number | null>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const item = photos.find((photo) => photo.id === active);
+  const photos = gallery;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [pageVisible, setPageVisible] = useState(true);
 
   useEffect(() => {
-    const dialog = dialogRef.current;
-    if (active !== null && dialog && !dialog.open) dialog.showModal();
-    return () => { if (dialog?.open) dialog.close(); };
-  }, [active]);
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updatePreference = () => setReducedMotion(query.matches);
+    updatePreference();
+    query.addEventListener('change', updatePreference);
+    return () => query.removeEventListener('change', updatePreference);
+  }, []);
+
+  useEffect(() => {
+    const updateVisibility = () => setPageVisible(document.visibilityState === 'visible');
+    updateVisibility();
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => document.removeEventListener('visibilitychange', updateVisibility);
+  }, []);
+
+  useEffect(() => {
+    if (photos.length < 2 || paused || reducedMotion || !pageVisible) return;
+    const timer = window.setTimeout(() => {
+      setPreviousIndex(activeIndex);
+      setActiveIndex((activeIndex + 1) % photos.length);
+    }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, pageVisible, paused, photos.length, reducedMotion]);
+
+  useEffect(() => {
+    if (previousIndex === null) return;
+    const timer = window.setTimeout(() => setPreviousIndex(null), 850);
+    return () => window.clearTimeout(timer);
+  }, [previousIndex]);
 
   if (photos.length === 0) return null;
 
+  const nextIndex = (activeIndex + 1) % photos.length;
+  const imageSizes = '(max-width: 640px) calc(100vw - 44px), (max-width: 1440px) 86vw, 1200px';
+
   return <>
-    <div className="gallery-grid">
-      {photos.map((photo) => <button className="gallery-card" key={photo.id} onClick={() => setActive(photo.id)} aria-label={`View ${photo.title}`}>
-        <span className="gallery-art"><Image src={photo.image!} alt={photo.alt} fill sizes="(max-width: 620px) 84vw, (max-width: 900px) 42vw, 28vw" className="gallery-image" /></span>
-        <span className="gallery-caption"><span><strong>{photo.title}</strong>{photo.note && <small>{photo.note}</small>}</span><span className="gallery-arrow" aria-hidden="true">↗</span></span>
-      </button>)}
-    </div>
-    {item && <dialog ref={dialogRef} className="lightbox" aria-labelledby="lightbox-title" onClick={(event) => { if (event.target === event.currentTarget) setActive(null); }} onCancel={() => setActive(null)}>
-      <div className="lightbox-inner"><button className="lightbox-close" autoFocus onClick={() => setActive(null)} aria-label="Close gallery">×</button>
-        <div className="lightbox-art"><Image src={item.image!} alt={item.alt} fill sizes="(max-width: 620px) 84vw, 45vw" className="lightbox-image" /></div>
-        <div className="lightbox-copy"><p className="eyebrow">SELECTED WORK</p><h3 id="lightbox-title">{item.title}</h3>{item.note && <p>{item.note}</p>}</div>
+    <div className="gallery-slideshow" role="region" aria-roledescription="carousel" aria-label="Food photographs">
+      <div className="gallery-frame" role="group" aria-roledescription="slide" aria-label={`${activeIndex + 1} of ${photos.length}`} aria-live="off">
+        {previousIndex !== null && <Image key={photos[previousIndex].image} src={photos[previousIndex].image} alt="" fill sizes={imageSizes} className="gallery-slide gallery-slide-previous" aria-hidden="true" />}
+        <Image key={photos[activeIndex].image} src={photos[activeIndex].image} alt={photos[activeIndex].alt} fill sizes={imageSizes} className="gallery-slide gallery-slide-active" priority={activeIndex === 0} />
+        {photos.length > 1 && <Image key={photos[nextIndex].image} src={photos[nextIndex].image} alt="" fill sizes={imageSizes} className="gallery-slide gallery-slide-prefetch" aria-hidden="true" loading="eager" />}
       </div>
-    </dialog>}
+      {photos.length > 1 && !reducedMotion && <button className="gallery-toggle" type="button" onClick={() => setPaused(!paused)}>{paused ? 'Play slideshow' : 'Pause slideshow'}</button>}
+    </div>
   </>;
 }
 

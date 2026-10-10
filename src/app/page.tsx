@@ -63,7 +63,7 @@ export default function Home() {
     {hasGallery && <section className="gallery-section section-wrap" id="gallery" aria-labelledby="gallery-title">
       <div className="section-head">
         <div className="section-meta"><Eyebrow>03 <span>/</span> Gallery</Eyebrow><span className="meta-rule" /></div>
-        <div className="section-title-group"><p className="section-overline">Kitchen and food photography</p><h2 id="gallery-title">Selected <em>work.</em></h2></div>
+        <div className="section-title-group"><p className="section-overline">Food photography</p><h2 id="gallery-title">Selected <em>work.</em></h2></div>
       </div>
       <Gallery />
     </section>}
