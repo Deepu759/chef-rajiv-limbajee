@@ -3,7 +3,7 @@ import './globals.css';
 import { chef } from '@/data/chef';
 
 const title = 'Rajiv Limbajee | Head Chef at Le Petit Beefbar Edinburgh';
-const description = 'Rajiv Limbajee is Head Chef at Le Petit Beefbar Edinburgh, at InterContinental Edinburgh The George. His career spans kitchens in Mauritius, the Maldives, the UAE and Scotland.';
+const description = 'Rajiv Limbajee is Head Chef at Le Petit Beefbar Edinburgh, at InterContinental Edinburgh The George. His career spans Mauritius, the Maldives, the UAE and Scotland.';
 
 export const metadata: Metadata = {
   ...(chef.siteUrl ? { metadataBase: new URL(chef.siteUrl), alternates: { canonical: '/' } } : {}),
@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const person = {
+    '@context': 'https://schema.org',
     '@type': 'Person',
     '@id': chef.siteUrl ? `${chef.siteUrl}/#person` : undefined,
     name: chef.name,
@@ -38,16 +39,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     workLocation: { '@type': 'Place', name: chef.location },
     ...(chef.siteUrl && chef.portrait ? { image: new URL(chef.portrait, chef.siteUrl).toString() } : {}),
     ...(chef.siteUrl ? { url: `${chef.siteUrl}/` } : {}),
+    ...(chef.siteUrl ? { mainEntityOfPage: `${chef.siteUrl}/` } : {}),
   };
 
-  const profilePage = {
-    '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    ...(chef.siteUrl ? { '@id': `${chef.siteUrl}/#profile`, url: `${chef.siteUrl}/` } : {}),
-    name: title,
-    description,
-    mainEntity: person,
-  };
-
-  return <html lang="en-GB"><body><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePage).replace(/</g, '\\u003c') }} />{children}</body></html>;
+  return <html lang="en-GB"><body><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person).replace(/</g, '\\u003c') }} />{children}</body></html>;
 }

@@ -60,9 +60,17 @@ export default function Home() {
       </li>)}</ol>
     </section>
 
+    {chef.skills.length > 0 && <section className="skills section-wrap" id="skills" aria-labelledby="skills-title">
+      <div className="section-head skills-head">
+        <div className="section-meta"><Eyebrow>03 <span>/</span> Skills</Eyebrow><span className="meta-rule" /></div>
+        <div className="section-title-group"><p className="section-overline">Culinary practice</p><h2 id="skills-title">Skills</h2></div>
+      </div>
+      <ul className="skills-list">{chef.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul>
+    </section>}
+
     {hasGallery && <section className="gallery-section section-wrap" id="gallery" aria-labelledby="gallery-title">
       <div className="section-head">
-        <div className="section-meta"><Eyebrow>03 <span>/</span> Gallery</Eyebrow><span className="meta-rule" /></div>
+        <div className="section-meta"><Eyebrow>04 <span>/</span> Gallery</Eyebrow><span className="meta-rule" /></div>
         <div className="section-title-group"><p className="section-overline">Food photography</p><h2 id="gallery-title">Selected <em>work.</em></h2></div>
       </div>
       <Gallery />
@@ -70,11 +78,10 @@ export default function Home() {
 
     {chef.philosophy && <section className="philosophy section-wrap"><div className="section-meta"><Eyebrow>04 <span>/</span> Approach</Eyebrow></div><blockquote>{chef.philosophy}</blockquote></section>}
     {chef.awards.length > 0 && <section className="recognition section-wrap"><div className="section-meta"><Eyebrow>Recognition</Eyebrow></div><ul>{chef.awards.map((award) => <li key={award}>{award}</li>)}</ul></section>}
-    {chef.skills.length > 0 && <section className="skills section-wrap"><div className="section-meta"><Eyebrow>Specialisms</Eyebrow></div><ul>{chef.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul></section>}
     {chef.reference.quotation && <section className="reference section-wrap"><div className="section-meta"><Eyebrow>Professional reference</Eyebrow></div><blockquote>{chef.reference.quotation}</blockquote><p>{chef.reference.name} <span>·</span> {chef.reference.role}, {chef.reference.workplace}</p></section>}
 
     <section className="contact" id="contact" aria-labelledby="contact-title">
-      <div className="contact-inner"><div className="contact-meta"><Eyebrow>04 <span>/</span> Contact</Eyebrow><span>EDINBURGH, SCOTLAND</span></div>
+      <div className="contact-inner"><div className="contact-meta"><Eyebrow>05 <span>/</span> Contact</Eyebrow><span>EDINBURGH, SCOTLAND</span></div>
         <h2 id="contact-title">For professional<br /><em>enquiries.</em></h2>
         <div className="contact-bottom"><p>Email or connect with Rajiv on LinkedIn.</p><div className="contact-links">
           {chef.emails.map((email) => <a className="contact-button contact-email" href={`mailto:${email}`} key={email}>{email} <MailIcon /></a>)}

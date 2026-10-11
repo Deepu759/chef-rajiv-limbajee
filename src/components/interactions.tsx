@@ -3,28 +3,35 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { chef } from '@/data/chef';
-import { gallery } from '@/data/gallery';
+import { gallery, galleryCategories, type GalleryCategory } from '@/data/gallery';
 
 export function SiteHeader({ showGallery }: { showGallery: boolean }) {
   const [open, setOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const links = [
     ['About', '#about'],
     ['Career', '#career'],
+    ['Skills', '#skills'],
     ...(showGallery ? [['Gallery', '#gallery']] : []),
     ['Contact', '#contact'],
   ];
 
   useEffect(() => {
+    if (!open) return;
+
     function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        setOpen(false);
+        if (menuButtonRef.current?.offsetParent !== null) menuButtonRef.current?.focus();
+      }
     }
     document.addEventListener('keydown', closeOnEscape);
     return () => document.removeEventListener('keydown', closeOnEscape);
-  }, []);
+  }, [open]);
 
   return <header className="site-header">
     <a className="wordmark" href="#top" aria-label="Rajiv Limbajee, home">RL<span>.</span></a>
-    <button className="menu-toggle" aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpen(!open)}>
+    <button ref={menuButtonRef} type="button" className="menu-toggle" aria-expanded={open} aria-controls="primary-navigation" onClick={() => setOpen(!open)}>
       <span>{open ? 'Close' : 'Menu'}</span><span className="menu-toggle-mark" aria-hidden="true">{open ? '−' : '+'}</span>
     </button>
     <nav id="primary-navigation" className={open ? 'navigation is-open' : 'navigation'} aria-label="Main navigation">
@@ -35,14 +42,15 @@ export function SiteHeader({ showGallery }: { showGallery: boolean }) {
 }
 
 export function Gallery() {
-  const photos = gallery;
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeCategory, setActiveCategory] = useState<GalleryCategory>('Selected work');
   const [interactionPause, setInteractionPause] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [dragging, setDragging] = useState(false);
   const inactivityTimer = useRef<number | null>(null);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const photos = gallery.filter((photo) => photo.category === activeCategory);
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -89,11 +97,24 @@ export function Gallery() {
     setActiveIndex((current) => (current + direction + photos.length) % photos.length);
   }
 
+  function chooseCategory(category: GalleryCategory) {
+    noteInteraction();
+    setActiveCategory(category);
+    setActiveIndex(0);
+  }
+
   const imageSizes = '(max-width: 640px) calc(84vw - 37px), (max-width: 1440px) 72vw, 1024px';
 
   return <>
-    <div className="gallery-slideshow" role="region" aria-roledescription="carousel" aria-label="Food photographs">
-      <div className={dragging ? 'gallery-frame is-dragging' : 'gallery-frame'} role="group" aria-label="Use the left and right arrow keys to change photos" aria-live="off" tabIndex={0}
+    <div className="gallery-slideshow">
+      <div className="gallery-category-picker" role="group" aria-label="Photo categories">
+        {galleryCategories.map((category) => <button key={category} type="button" aria-pressed={activeCategory === category} onClick={() => chooseCategory(category)}>{category}</button>)}
+      </div>
+      <div className="gallery-category-heading" aria-live="polite">
+        <h3>{activeCategory}</h3><span>{photos.length} {photos.length === 1 ? 'photograph' : 'photographs'}</span>
+      </div>
+      <div className="gallery-slides" role="region" aria-roledescription="carousel" aria-label={`${activeCategory} photographs`}>
+      <div className={dragging ? 'gallery-frame is-dragging' : 'gallery-frame'} role="group" aria-label={`Use the left and right arrow keys to change ${activeCategory.toLowerCase()} photographs`} aria-live="off" tabIndex={0}
         onKeyDown={(event) => {
           if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
           if (event.key === 'ArrowRight') { event.preventDefault(); move(1); }
@@ -120,7 +141,7 @@ export function Gallery() {
           const index = (activeIndex + offset + photos.length) % photos.length;
           const active = offset === 0;
           const side = Math.abs(offset) === 1;
-          return <div key={photos[index].image} className={`gallery-slide${active ? ' gallery-slide-active' : side ? ' gallery-slide-side' : ' gallery-slide-away'}`}
+          return <div key={`${slot}-${photos[index].image}`} className={`gallery-slide${active ? ' gallery-slide-active' : side ? ' gallery-slide-side' : ' gallery-slide-away'}`}
             role={active ? 'group' : undefined} aria-roledescription={active ? 'slide' : undefined}
             aria-label={active ? `${activeIndex + 1} of ${photos.length}` : undefined} aria-hidden={!active}
             style={{ transform: `translate3d(calc(-50% + ${offset * 99}%), -50%, 0) scale(${active ? 1 : 0.9})` }}>
@@ -131,6 +152,7 @@ export function Gallery() {
       <div className="gallery-controls">
         <button type="button" aria-label="Previous food photograph" onClick={() => move(-1)}>←</button>
         <button type="button" aria-label="Next food photograph" onClick={() => move(1)}>→</button>
+      </div>
       </div>
     </div>
   </>;
